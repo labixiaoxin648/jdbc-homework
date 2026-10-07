@@ -1,0 +1,95 @@
+================================================================
+        ORM + JDBC 作业演示 —— JDBCTool 通用工具类
+        数据库：DateTest      表：student / college
+        技术点：Java 反射 + 注解映射 + JDBC 预编译语句
+================================================================
+[连接成功] jdbc:mysql://127.0.0.1:3306/DateTest
+           用户：root（字符集 utf8，时区 Asia/Shanghai，完整 URL 见 util/DBUtil.java）
+[表结构] college / student 已就绪
+
+----------------------------------------------------------------
+  一、学院表 college —— 增、删、改、查
+----------------------------------------------------------------
+
+  >> 1. 新增学院 save()
+    [JDBCTool] save() 主键为空，交由数据库自增生成
+    [JDBCTool] SQL: INSERT INTO college (name, code) VALUES (?, ?) | 参数: [自动化学院, AUTO] | 影响行数: 1
+    新增行数：1，实体对象：College{id=null, name='自动化学院', code='AUTO'}（id 由数据库自增后未回填）
+
+  >> 2. 查询全部学院 resultSetToList()
+    College{id=1, name='计算机学院', code='CS'}
+    College{id=2, name='外国语学院', code='FL'}
+    College{id=3, name='数学学院', code='MATH'}
+    College{id=4, name='自动化学院', code='AUTO'}
+
+  >> 3. 修改学院 update()：把 id=1 的名称改为「计算机与人工智能学院」
+    [JDBCTool] SQL: UPDATE college SET name = ?, code = ? WHERE id = ? | 参数: [计算机与人工智能学院, CS, 1] | 影响行数: 1
+    修改行数：1，修改后：College{id=1, name='计算机与人工智能学院', code='CS'}
+
+  >> 4. 删除学院 delete()：删除 id=4（自动化学院）
+    [JDBCTool] SQL: DELETE FROM college WHERE id = ? | 参数: [4] | 影响行数: 1
+    删除行数：1
+    删除后剩余学院：
+      College{id=1, name='计算机与人工智能学院', code='CS'}
+      College{id=2, name='外国语学院', code='FL'}
+      College{id=3, name='数学学院', code='MATH'}
+
+----------------------------------------------------------------
+  二、学生表 student —— 增、删、改、查（含入学时间 / 是否毕业 / 学费）
+----------------------------------------------------------------
+
+  >> 1. 新增学生 save()
+    [JDBCTool] save() 主键为空，交由数据库自增生成
+    [JDBCTool] SQL: INSERT INTO student (name, major, age, enrollment_time, graduated, tuition) VALUES (?, ?, ?, ?, ?, ?) | 参数: [赵六, 人工智能, 19, 2024-09-01, false, 6200.00] | 影响行数: 1
+    1 行受影响 -> 赵六
+    [JDBCTool] save() 主键为空，交由数据库自增生成
+    [JDBCTool] SQL: INSERT INTO student (name, major, age, enrollment_time, graduated, tuition) VALUES (?, ?, ?, ?, ?, ?) | 参数: [孙七, 数据科学与大数据技术, 23, 2020-09-01, true, 5900.50] | 影响行数: 1
+    1 行受影响 -> 孙七
+
+  >> 2. 查询全部学生 resultSetToList()（ResultSet -> 实体列表，字段一一对应）
+    Student{id=1, name='张三', major='软件工程', age=20, enrollmentTime=2023-09-01, graduated=false, tuition=5800.00}
+    Student{id=2, name='李四', major='计算机科学', age=22, enrollmentTime=2021-09-01, graduated=true, tuition=5500.00}
+    Student{id=3, name='王五', major='英语', age=21, enrollmentTime=2022-09-01, graduated=false, tuition=5000.00}
+    Student{id=4, name='赵六', major='人工智能', age=19, enrollmentTime=2024-09-01, graduated=false, tuition=6200.00}
+    Student{id=5, name='孙七', major='数据科学与大数据技术', age=23, enrollmentTime=2020-09-01, graduated=true, tuition=5900.50}
+    共 5 条记录，且 graduated 已由 TINYINT 映射为 boolean
+    [已毕业] 李四 学费 5500.00
+    [已毕业] 孙七 学费 5900.50
+
+  >> 3. 修改学生 update()：把「赵六」的年龄改为 20、学费改为 6666.66、标记为已毕业
+    [JDBCTool] SQL: UPDATE student SET name = ?, major = ?, age = ?, enrollment_time = ?, graduated = ?, tuition = ? WHERE id = ? | 参数: [赵六, 人工智能, 20, 2024-09-01, true, 6666.66, 4] | 影响行数: 1
+    修改行数：1
+    修改后：Student{id=4, name='赵六', major='人工智能', age=20, enrollmentTime=2024-09-01, graduated=true, tuition=6666.66}
+
+  >> 4. 删除学生 delete()：删除「孙七」(id=5)
+    [JDBCTool] SQL: DELETE FROM student WHERE id = ? | 参数: [5] | 影响行数: 1
+    删除行数：1
+    删除后学生列表：
+      Student{id=1, name='张三', major='软件工程', age=20, enrollmentTime=2023-09-01, graduated=false, tuition=5800.00}
+      Student{id=2, name='李四', major='计算机科学', age=22, enrollmentTime=2021-09-01, graduated=true, tuition=5500.00}
+      Student{id=3, name='王五', major='英语', age=21, enrollmentTime=2022-09-01, graduated=false, tuition=5000.00}
+      Student{id=4, name='赵六', major='人工智能', age=20, enrollmentTime=2024-09-01, graduated=true, tuition=6666.66}
+
+----------------------------------------------------------------
+  三、按主键查询 getOneById()
+----------------------------------------------------------------
+
+  >> 根据 id=1 查询学生
+    查到：Student{id=1, name='张三', major='软件工程', age=20, enrollmentTime=2023-09-01, graduated=false, tuition=5800.00}
+
+  >> 根据一个不存在的 id=999999 查询学生
+    查到：null（返回 null 表示无此记录）
+
+  >> 根据 id=1 查询学院
+    查到：College{id=1, name='计算机与人工智能学院', code='CS'}
+
+----------------------------------------------------------------
+  四、通用性验证：JDBCTool 不依赖任何具体实体类
+----------------------------------------------------------------
+    实体类的表名 / 字段名 / 主键全部来自注解：
+      Student -> 表 student，主键 id
+      College -> 表 college，主键 id
+    新增实体类时，只要按同样规则加注解，无需修改 JDBCTool 一行代码。
+================================================================
+        演示结束：两张表的增、删、改、查全部执行完成
+================================================================
