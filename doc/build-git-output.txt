@@ -1,0 +1,29 @@
+PS E:/项目/jdbc> mvn clean compile
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.example:jdbc-homework >----------------------
+[INFO] Building jdbc-homework 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ jdbc-homework ---
+[INFO] Deleting E:\项目\jdbc\target
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ jdbc-homework ---
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ jdbc-homework ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 8 source files with javac [debug release 17] to target\classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.240 s
+[INFO] Finished at: 2026-10-07T19:02:14+08:00
+[INFO] ------------------------------------------------------------------------
+
+PS E:/项目/jdbc> git log --oneline
+b9afd58 feat: 基于 Java 反射与注解实现 JDBCTool 通用 ORM 工具类
+
+PS E:/项目/jdbc> git remote -v
+(远程仓库地址见答案区)
