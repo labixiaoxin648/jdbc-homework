@@ -1,5 +1,7 @@
 # jdbc-homework —— ORM 与 JDBC 作业
 
+> 仓库地址：<https://github.com/labixiaoxin648/jdbc-homework>
+
 用 **Java 反射 + 注解** 实现一个通用 ORM 工具类 `JDBCTool`，完成 `DateTest` 库中
 `student`（学生表）与 `college`（学院表）的增、删、改、查。
 
